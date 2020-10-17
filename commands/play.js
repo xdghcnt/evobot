@@ -29,6 +29,12 @@ module.exports = {
     if (!permissions.has("SPEAK"))
       return message.reply("I cannot speak in this voice channel, make sure I have the proper permissions!");
 
+    let filter;
+    if (args[0] === "filter") {
+      args.shift();
+      filter = args.shift();
+    }
+
     const search = args.join(" ");
     const videoPattern = /^(https?:\/\/)?(www\.)?(m\.)?(youtube\.com|youtu\.?be)\/.+$/gi;
     const playlistPattern = /^.*(list=)([^#\&\?]*).*/gi;
@@ -62,7 +68,8 @@ module.exports = {
         song = {
           title: songInfo.videoDetails.title,
           url: songInfo.videoDetails.video_url,
-          duration: songInfo.videoDetails.lengthSeconds
+          duration: songInfo.videoDetails.lengthSeconds,
+          filter
         };
       } catch (error) {
         console.error(error);
@@ -74,7 +81,8 @@ module.exports = {
         song = {
           title: trackInfo.title,
           url: trackInfo.permalink_url,
-          duration: Math.ceil(trackInfo.duration / 1000)
+          duration: Math.ceil(trackInfo.duration / 1000),
+          filter
         };
       } catch (error) {
         if (error.statusCode === 404)
@@ -88,7 +96,8 @@ module.exports = {
         song = {
           title: songInfo.videoDetails.title,
           url: songInfo.videoDetails.video_url,
-          duration: songInfo.videoDetails.lengthSeconds
+          duration: songInfo.videoDetails.lengthSeconds,
+          filter
         };
       } catch (error) {
         console.error(error);

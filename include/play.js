@@ -1,4 +1,4 @@
-const ytdlDiscord = require("ytdl-core-discord");
+const ytdlFilter = require("../commands/ytdl-filter");
 const scdl = require("soundcloud-downloader");
 const { canModifyQueue } = require("../util/EvobotUtil");
 
@@ -18,7 +18,8 @@ module.exports = {
 
     try {
       if (song.url.includes("youtube.com")) {
-        stream = await ytdlDiscord(song.url, { highWaterMark: 1 << 25 });
+        stream = await ytdlFilter(song.url, { highWaterMark: 1 << 25 },
+            song.filter || "aecho=0.8:0.9:40:0.2,lowpass=200");
       } else if (song.url.includes("soundcloud.com")) {
         try {
           stream = await scdl.downloadFormat(
@@ -48,7 +49,7 @@ module.exports = {
     queue.connection.on("disconnect", () => message.client.queue.delete(message.guild.id));
 
     const dispatcher = queue.connection
-      .play(stream, { type: streamType })
+      .play(stream, { type: streamType,  })
       .on("finish", () => {
         if (collector && !collector.ended) collector.stop();
 
